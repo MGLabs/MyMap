@@ -13,14 +13,25 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener{
 
     boolean mapReady;
     GoogleMap mMap;
     MapFragment mapFragment;
+
+    MarkerOptions renton;
+    MarkerOptions kirkland;
+
+    LatLng renton_position = new LatLng(47.489805, -122.120502);
+    LatLng kirkland_position = new LatLng(47.7301986, -122.1768858);
+    LatLng everett_position = new LatLng(47.978784, -122.202001);
+
 
 
     @Override
@@ -38,6 +49,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         btnSatellite.setOnClickListener(this);
         btnHybrid.setOnClickListener(this);
 
+        //Markers
+        renton = new MarkerOptions()
+                .position(new LatLng(47.489805, -122.120502))
+                .title("Renton");
+
+        kirkland = new MarkerOptions()
+                .position(new LatLng(47.7301986, -122.1768858))
+                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.linux))
+                .title("Kirkland");
+
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -46,10 +67,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
         mapReady = true;
-        LatLng newYork = new LatLng(40.7484, -73.9857);
-        CameraPosition target = CameraPosition.builder().target(newYork).zoom(14).build();
+
+        LatLng seattle = new LatLng(47.6204, -122.2491);
+        CameraPosition target = CameraPosition.builder()
+                .target(seattle)
+                .bearing(0)     //straight down
+                .zoom(14)
+                .build();
+
+        mMap.addMarker(renton);
+        mMap.addMarker(kirkland);
+
+        //Polylines
+        mMap.addPolyline(new PolylineOptions().geodesic(true)
+                .add(renton_position)
+                .add(kirkland_position)
+                .add(everett_position));
+
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(target));
     }
@@ -73,6 +110,4 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     }
-
-
 }
